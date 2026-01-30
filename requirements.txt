@@ -1,0 +1,7 @@
+streamlit
+pandas
+qrcode
+pillow
+pyzbar
+st-gsheets-connection
+pyzbar
