@@ -4,9 +4,7 @@ from datetime import datetime, timedelta, timezone
 import qrcode
 from io import BytesIO
 
-now = datetime.now(timezone(timedelta(hours=8))).strftime("%Y-%m-%d %H:%M:%S")
 def checkout_qrcode(df, conn, save_data):     
-    global now
 
     # --- 介面導航 ---
     st.set_page_config(page_title="Logistic Community Sharing點名管理系統", layout="wide")
@@ -17,7 +15,8 @@ def checkout_qrcode(df, conn, save_data):
         btn = st.form_submit_button("送出")
         if btn:
             if name in df['信箱'].values:
-                idx = df[df['信箱'].str.lower() == name].index[0]              
+                idx = df[df['信箱'].str.lower() == name].index[0]  
+                now = datetime.now(timezone(timedelta(hours=8))).strftime("%Y-%m-%d %H:%M:%S")            
                 if pd.isna(df.at[idx, '簽退時間']):
                     df.at[idx, '簽退時間'] = now
                     st.info(f"{name} 簽退成功！")
@@ -28,7 +27,6 @@ def checkout_qrcode(df, conn, save_data):
                 st.error("名單中無此信箱")
 
 def checkin_on_qrcode(df, conn, save_data):     
-    global now
 
     # --- 介面導航 ---
     st.set_page_config(page_title="Logistic Community Sharing點名管理系統", layout="wide")
@@ -40,6 +38,7 @@ def checkin_on_qrcode(df, conn, save_data):
         if btn:
             if name in df['信箱'].values:
                 idx = df[df['信箱'].str.lower() == name].index[0]
+                now = datetime.now(timezone(timedelta(hours=8))).strftime("%Y-%m-%d %H:%M:%S")
                 if pd.isna(df.at[idx, '簽到時間']):
                     df.at[idx, '簽到時間'] = now
                     df.at[idx, 'Mode']="ONLINE"
@@ -51,7 +50,6 @@ def checkin_on_qrcode(df, conn, save_data):
                 st.error("名單中無此信箱")
 
 def checkin_off_qrcode(df, conn, save_data):   
-    global now
 
     # --- 介面導航 ---
     st.set_page_config(page_title="Logistic Community Sharing點名管理系統", layout="wide")
@@ -63,6 +61,7 @@ def checkin_off_qrcode(df, conn, save_data):
         if btn:
             if name in df['信箱'].values:
                 idx = df[df['信箱'].str.lower() == name].index[0]
+                now = datetime.now(timezone(timedelta(hours=8))).strftime("%Y-%m-%d %H:%M:%S")
                 if pd.isna(df.at[idx, '簽到時間']):
                     df.at[idx, 'Mode']="ONLINE"
                     df.at[idx, '簽到時間'] = now
