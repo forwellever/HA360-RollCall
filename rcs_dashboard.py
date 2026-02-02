@@ -77,6 +77,10 @@ menu = st.sidebar.radio("功能選單", ["目前積分表", "管理員後台"])
 # 頁面 1：學員簽到頁
 # --------------------------
 mode = st.query_params.get("mode")
+if st.session_state.get("attendance_data") is None:
+    df = load_data()
+    st.session_state.attendance_data = df
+
 if mode == "checkin":
     # 呼叫簽到頁面函數
     rc.checkin_on_qrcode(st.session_state.attendance_data, conn, save_data)
@@ -87,7 +91,7 @@ elif mode == "checkout":
 
 elif menu == "目前積分表":
     st.title("🎓 Logistic Community Sharing")
-    df = load_data()
+    #df = load_data()
     #依照「積分」進行排序
     # ascending=False 代表「遞減排序」（從大到小）
     df = df.sort_values(by="積分", ascending=False)
@@ -104,7 +108,7 @@ elif menu == "管理員後台":
     pwd = st.text_input("請輸入管理員密碼", type="password")
     if pwd == st.secrets["passwords"]["admin_password"]:
         st.success("身分驗證通過")
-        df = load_data()
+        #df = load_data()
         # 1. 確保「積分」是整數型態，並把空值補 0
         df['積分'] = pd.to_numeric(df['積分'], errors='coerce').fillna(0).astype(int)
         
