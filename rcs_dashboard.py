@@ -77,9 +77,8 @@ menu = st.sidebar.radio("功能選單", ["目前積分表", "管理員後台"])
 # 頁面 1：學員簽到頁
 # --------------------------
 mode = st.query_params.get("mode")
-if st.session_state.get("attendance_data") is None:
-    df = load_data()
-    st.session_state.attendance_data = df
+df = load_data()
+st.session_state.attendance_data = df
 
 if mode == st.secrets["url_modes"]["checkin_on_key"]: #線上checkin
     # 呼叫線上簽到頁面函數
