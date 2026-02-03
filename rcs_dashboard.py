@@ -60,7 +60,7 @@ def update_attendance_cell(email, updates):
         # 我們直接用 st-gsheets-connection 建立的 client
         # 注意：spreadsheet 網址要從 secrets 拿
         spreadsheet_url = st.secrets["connections"]["gsheets"]["spreadsheet"]
-        client = conn._instance.client
+        client = conn._instance._client
         sh = client.open_by_url(spreadsheet_url)
         ws = sh.get_worksheet(0)  # 取得第一個分頁
 
