@@ -31,7 +31,12 @@ def save_data(df):
 
 def handle_update():
     global df, target, points
-    df.loc[df['姓名'] == target, '積分'] += points
+    new_point = df.loc[df['姓名'] == target, '積分']
+    new_point += points
+    email = df.loc[df['姓名'] == target, '信箱']
+
+    update_attendance_cell(email,{"積分":new_point})
+
     save_data(df)
     st.balloons()
     st.session_state.status_msg = f"✅ 已幫 {target} 增加 {st.session_state.points_to_add} 分"
@@ -92,22 +97,6 @@ def update_attendance_cell(email, updates):
     except Exception as e:
         st.error(f"同步失敗: {e}")
         return False
-
-# if not os.path.exists(DB_FILE):
-#     df_init = pd.DataFrame([
-#         {"信箱": "ZZ0001","姓名":"Apple", "Mode": None,"簽到時間": None, "簽退時間": None, "積分": 0}
-#     ])
-#     df_init.to_csv(DB_FILE, index=False)
-# def load_data():
-#     try:
-#         # 嘗試用 utf-8-sig 讀取 (最推薦，能處理 Excel 存出的中文)
-#         return pd.read_csv(DB_FILE, encoding='utf-8-sig')
-#     except UnicodeDecodeError:
-#         # 如果還是失敗，嘗試用繁體中文常用的 big5 讀取
-#         return pd.read_csv(DB_FILE, encoding='big5')
-
-# def save_data(df):
-#     df.to_csv(DB_FILE, index=False)
 
 target = "" 
 points = 0
