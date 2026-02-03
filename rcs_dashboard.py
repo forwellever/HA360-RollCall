@@ -156,8 +156,7 @@ elif menu == "管理員後台":
         df['簽退時間'] = df['簽退時間'].fillna("")
 
         # 分成三個控制區塊
-        tabs = st.tabs(["🏆 積分管理", 
-                        "📝 名單編輯", 
+        tabs = st.tabs(["🏆 積分管理" 
                         "📊 數據導出"])
 
         with tabs[0]:
@@ -175,38 +174,38 @@ elif menu == "管理員後台":
 
             st.button("確認加分", on_click=handle_update)
 
+        # with tabs[1]:
+
+        #     st.subheader("手動修改資料")
+        #     # 讓管理員可以直接在網頁上編輯表格
+        #     edited_df = st.data_editor(
+        #         df,
+        #         num_rows="dynamic", # 允許動態增減行數
+        #         column_config={
+        #             "信箱": st.column_config.TextColumn("信箱", help="請輸入信箱", required=True),
+        #             "姓名": st.column_config.TextColumn("姓名", help="請輸入全名", required=True),
+        #             "簽到來自": st.column_config.TextColumn("簽到來自", disabled=True),
+        #             "簽到時間": st.column_config.TextColumn("簽到時間", disabled=True),
+        #             "簽退時間": st.column_config.TextColumn("簽退時間", disabled=True),
+        #             "積分": st.column_config.NumberColumn(
+        #                 "積分",
+        #                 help="預設值為 0",
+        #                 min_value=0,
+        #                 default=0,  # 這行就是你要的預設值！
+        #                 format="%d 分",
+        #                 disabled=True
+        #             ),
+        #         },
+        #         use_container_width=True
+        #     )
+
+
+
+        #     if st.button("儲存所有修改"):
+        #         save_data(edited_df)
+        #         st.toast("資料庫已更新！")
+
         with tabs[1]:
-
-            st.subheader("手動修改資料")
-            # 讓管理員可以直接在網頁上編輯表格
-            edited_df = st.data_editor(
-                df,
-                num_rows="dynamic", # 允許動態增減行數
-                column_config={
-                    "信箱": st.column_config.TextColumn("信箱", help="請輸入信箱", required=True),
-                    "姓名": st.column_config.TextColumn("姓名", help="請輸入全名", required=True),
-                    "簽到來自": st.column_config.TextColumn("簽到來自", disabled=True),
-                    "簽到時間": st.column_config.TextColumn("簽到時間", disabled=True),
-                    "簽退時間": st.column_config.TextColumn("簽退時間", disabled=True),
-                    "積分": st.column_config.NumberColumn(
-                        "積分",
-                        help="預設值為 0",
-                        min_value=0,
-                        default=0,  # 這行就是你要的預設值！
-                        format="%d 分",
-                        disabled=True
-                    ),
-                },
-                use_container_width=True
-            )
-
-
-
-            if st.button("儲存所有修改"):
-                save_data(edited_df)
-                st.toast("資料庫已更新！")
-
-        with tabs[2]:
 
             st.subheader("下載統計報表")
             st.dataframe(df)
