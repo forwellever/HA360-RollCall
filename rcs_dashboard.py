@@ -50,6 +50,49 @@ def handle_update():
         st.session_state.points_to_add = 5
         st.session_state.status_msg = ""
 
+def update_attendance_cell(email, updates):
+    """
+    email: 學員信箱 (用來找哪一列)
+    updates: 字典格式，例如 {"簽到時間": "10:00", "Mode": "OFFLINE"}
+    """
+    try:
+        # 1. 取得底層的 gspread 工作表物件
+        # 我們直接用 st-gsheets-connection 建立的 client
+        # 注意：spreadsheet 網址要從 secrets 拿
+        spreadsheet_url = st.secrets["connections"]["gsheets"]["spreadsheet"]
+        client = conn._instance.client
+        sh = client.open_by_url(spreadsheet_url)
+        ws = sh.get_worksheet(0)  # 取得第一個分頁
+
+        # 2. 找到該學員在第幾列 (假設信箱在第一欄 A)
+        cell = ws.find(email)
+        row_idx = cell.row
+
+        # 3. 根據標題找到對應的欄位索引 (Column Index)
+        # 取得第一列所有標題，建立 標題 -> 欄位序號 的對照表
+        headers = ws.row_values(1)
+        header_map = {title: i + 1 for i, title in enumerate(headers)}
+
+        cells_to_update = []
+
+        # 4. 執行局部更新
+        for col_name, value in updates.items():
+            if col_name in header_map:
+                col_idx = header_map[col_name]
+                cell = ws.cell(row_idx, col_idx)
+                cell.value = value
+                cells_to_update.append(cell)
+        if cells_to_update:
+            ws.update_cells(cells_to_update)
+
+        # 5. 清除快取，確保下次 load_data 是最新的
+        st.cache_data.clear()
+        st.toast(f"✅ {email} 資料同步成功！")
+        return True
+    except Exception as e:
+        st.error(f"同步失敗: {e}")
+        return False
+
 # if not os.path.exists(DB_FILE):
 #     df_init = pd.DataFrame([
 #         {"信箱": "ZZ0001","姓名":"Apple", "Mode": None,"簽到時間": None, "簽退時間": None, "積分": 0}
@@ -82,15 +125,15 @@ st.session_state.attendance_data = df
 
 if mode == st.secrets["url_modes"]["checkin_on_key"]: #線上checkin
     # 呼叫線上簽到頁面函數
-    rc.checkin_on_qrcode(st.session_state.attendance_data, conn, save_data)
+    rc.checkin_on_qrcode(st.session_state.attendance_data, conn, update_attendance_cell)
 
 elif mode == st.secrets["url_modes"]["checkin_off_key"]: #現場checkin
     # 呼叫簽退頁面函數 
-    rc.checkin_off_qrcode(st.session_state.attendance_data, conn, save_data)
+    rc.checkin_off_qrcode(st.session_state.attendance_data, conn, update_attendance_cell)
 
 elif mode == st.secrets["url_modes"]["checkout_key"]: #checkout
     # 呼叫簽退頁面函數 
-    rc.checkout_qrcode(st.session_state.attendance_data, conn, save_data)
+    rc.checkout_qrcode(st.session_state.attendance_data, conn, update_attendance_cell)
 
 elif menu == "目前積分表":
     st.title("🎓 Logistic Community Sharing")
